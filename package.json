@@ -1,25 +1,28 @@
 {
-  "name": "reboot-ubiquiti-nano-beam",
+  "name": "reboot-ubiquiti-nano-beam-node",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
+  "description": "https://khalilstemmler.com/blogs/typescript/node-starter-project/",
+  "main": "index.js",
   "scripts": {
-    "start": "ts-node .",
-    "build": "npm run build-js && npm run build-exe",
-    "build-js": "rimraf ./build && tsc",
-    "build-exe": "nexe --build",
+    "start:dev": "npx nodemon",
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.0.3",
-    "puppeteer": "^20.3.0"
-  },
   "devDependencies": {
-    "nexe": "^4.0.0-rc.2",
-    "rimraf": "^5.0.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "^20.10.8",
+    "nodemon": "^3.0.2",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.5",
+    "dotenv": "^16.3.1",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^21.7.0"
   }
 }

@@ -1,7 +1,8 @@
-import * as dotenv from 'dotenv';
-import puppeteer from 'puppeteer';
 import axios from 'axios';
+import * as dotenv from 'dotenv';
 import https from 'https';
+import cron from 'node-cron';
+import puppeteer from 'puppeteer';
 
 dotenv.config({
     override: true,
@@ -111,9 +112,14 @@ const rebootWithHttpRequests = async (
     });
 }
 
-const main = async () => {
-    // await rebootWithPuppeteer(USERNAME, PASSWORD, DEFAULT_GATEWAY);
-    await rebootWithHttpRequests(USERNAME, PASSWORD, DEFAULT_GATEWAY, STAIF);
+const reboot = () => {
+    console.log("Rebooting ...")
+    rebootWithHttpRequests(USERNAME, PASSWORD, DEFAULT_GATEWAY, STAIF).catch(console.error);
 };
 
-main().catch(console.error);
+reboot();
+
+console.log("Running as cron job")
+cron.schedule('0 */5 * * * *', () => {
+    reboot();
+})

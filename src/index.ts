@@ -8,12 +8,13 @@ dotenv.config({
     override: true,
 });
 
-const { USERNAME, PASSWORD, DEFAULT_GATEWAY, STAIF } = process.env;
+const { USERNAME, PASSWORD, DEFAULT_GATEWAY, STAIF, CRON_INTERVAL } = process.env;
 
 if (!USERNAME) throw new Error('USERNAME is not defined');
 if (!PASSWORD) throw new Error('PASSWORD is not defined');
 if (!DEFAULT_GATEWAY) throw new Error('DEFAULT_GATEWAY is not defined');
 if (!STAIF) throw new Error('STAIF is not defined');
+if (!CRON_INTERVAL) throw new Error('CRON_INTERVAL is not defined');
 
 const rebootWithPuppeteer = async (username: string, password: string, defaultGateway: string) => {
     const browser = await puppeteer.launch({
@@ -120,6 +121,6 @@ const reboot = () => {
 reboot();
 
 console.log("Running as cron job")
-cron.schedule('0 */5 * * * *', () => {
+cron.schedule(CRON_INTERVAL, () => {
     reboot();
 })

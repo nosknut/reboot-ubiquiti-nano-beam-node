@@ -1,8 +1,23 @@
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import https from 'https';
+import * as log4js from 'log4js';
 import cron from 'node-cron';
 import puppeteer from 'puppeteer';
+
+log4js.configure({
+    appenders: {
+        console: { type: 'console' },
+        file: { type: 'file', filename: '.logs/reboot-ubiquiti-nano-beam-node.log' },
+    },
+    categories: {
+        default: { appenders: ['console', 'file'], level: 'trace' },
+    },
+});
+
+const logger = log4js.getLogger("reboot-ubiquiti-nano-beam-node");
+
+logger.level = "trace";
 
 dotenv.config({
     override: true,
@@ -22,23 +37,23 @@ const rebootWithPuppeteer = async (username: string, password: string, defaultGa
         ignoreHTTPSErrors: true
     });
 
-    console.log("[1/5] Opening page ...")
+    logger.debug("[1/5] Opening page ...")
     const page = await browser.newPage();
     await page.goto(defaultGateway, { waitUntil: 'networkidle2' });
 
-    console.log("[2/5] Logging in ...")
+    logger.debug("[2/5] Logging in ...")
     await page.type('#loginform-username', username);
     await page.type('#loginform-password', password);
     await page.click('[type="submit"][name="login"]');
 
-    console.log("[3/5] Confirming login ...")
+    logger.debug("[3/5] Confirming login ...")
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-    console.log("[4/5] Rebooting connection ...")
+    logger.debug("[4/5] Rebooting connection ...")
     const refreshButton = await page.$$('.ubnt-icon--refresh');
     await refreshButton[0].click();
 
-    console.log("[5/5] Done!")
+    logger.debug("[5/5] Done!")
     await page.close();
     await browser.close();
 };
@@ -114,13 +129,13 @@ const rebootWithHttpRequests = async (
 }
 
 const reboot = () => {
-    console.log("Rebooting ...")
+    logger.info("Rebooting ...")
     rebootWithHttpRequests(USERNAME, PASSWORD, DEFAULT_GATEWAY, STAIF).catch(console.error);
 };
 
 reboot();
 
-console.log("Running as cron job")
+logger.info("Running as cron job")
 cron.schedule(CRON_INTERVAL, () => {
     reboot();
 })
